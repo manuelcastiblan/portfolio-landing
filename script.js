@@ -4,6 +4,13 @@ const navAnchors = document.querySelectorAll(".nav-links a");
 const revealItems = document.querySelectorAll(".reveal");
 const sections = document.querySelectorAll("main section[id]");
 const yearEl = document.querySelector("#year");
+const currentPage = window.location.pathname.split("/").pop() || "index.html";
+const hashAnchors = Array.from(navAnchors).filter((anchor) =>
+  (anchor.getAttribute("href") || "").startsWith("#")
+);
+const pageAnchors = Array.from(navAnchors).filter(
+  (anchor) => !(anchor.getAttribute("href") || "").startsWith("#")
+);
 
 if (yearEl) {
   yearEl.textContent = new Date().getFullYear();
@@ -20,6 +27,15 @@ if (menuToggle && navLinks) {
       navLinks.classList.remove("is-open");
       menuToggle.setAttribute("aria-expanded", "false");
     });
+  });
+}
+
+if (pageAnchors.length > 0) {
+  pageAnchors.forEach((anchor) => {
+    const href = anchor.getAttribute("href") || "";
+    const targetPage = href.split("#")[0] || "index.html";
+    const isSamePage = targetPage === currentPage;
+    anchor.classList.toggle("active", isSamePage);
   });
 }
 
@@ -48,7 +64,7 @@ if (sections.length > 0) {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           const id = entry.target.getAttribute("id");
-          navAnchors.forEach((anchor) => {
+          hashAnchors.forEach((anchor) => {
             anchor.classList.toggle(
               "active",
               anchor.getAttribute("href") === `#${id}`
